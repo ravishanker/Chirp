@@ -1,12 +1,8 @@
 package com.fovea.chirp;
 
-import java.util.List;
-
-import winterwell.jtwitter.Twitter;
-import winterwell.jtwitter.TwitterException;
-
 import android.app.Service;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -18,12 +14,17 @@ public class UpdaterService extends Service {
 	private Updater updater;
 	private ChirpApplication chirp;
 	
+	DbHelper dbHelper;
+	SQLiteDatabase db;
+	
 	@Override
 	public void onCreate() {
 		super.onCreate();
 		
 		this.chirp = (ChirpApplication) getApplication();
 		this.updater = new Updater();
+		
+		dbHelper = new DbHelper(this);
 		
 		Log.d(TAG, "onCreated");
 	}
@@ -58,7 +59,6 @@ public class UpdaterService extends Service {
 	}
 	
 	private class Updater extends Thread {
-		List<Twitter.Status> timeline;
 		
 		public Updater() {
 			super("UpdaterService-Updater");
@@ -68,21 +68,15 @@ public class UpdaterService extends Service {
 		public void run() {
 			UpdaterService updaterService = UpdaterService.this;
 			while (updaterService.runFlag) {
-				Log.d(TAG, "Updater running");
+				Log.d(TAG, "Running background thread");
 				try {
 					// Get the time-line from the cloud
-					try {
-						timeline = chirp.getTwitter().getFriendsTimeline();
-					} catch (TwitterException e) {
-						Log.e(TAG, "Failed to connect to twitter service", e);
+					ChirpApplication chirp = (ChirpApplication) updaterService
+							.getApplication();
+					int newUpdates = chirp.fetchStatusUpdates();
+					if (newUpdates > 0) {
+						Log.d(TAG, "We have new status");
 					}
-				
-					for (Twitter.Status status : timeline) {
-						Log.d(TAG, String.format("%s: %s", 
-								status.user.name, status.text));
-					}
-				
-					Log.d(TAG, "Updater ran");
 					Thread.sleep(DELAY);
 				} catch (InterruptedException e) {
 					updaterService.runFlag = false;
