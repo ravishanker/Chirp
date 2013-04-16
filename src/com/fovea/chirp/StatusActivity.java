@@ -5,11 +5,13 @@ import winterwell.jtwitter.TwitterException;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -21,10 +23,10 @@ public class StatusActivity extends Activity
 							implements OnClickListener,
 							TextWatcher {
 
+
 	private static final String TAG = "StatusActivity";
 	EditText editText;
 	Button updateButton;
-	Twitter twitter;
 	TextView textCount;
 	
 	@Override
@@ -43,8 +45,6 @@ public class StatusActivity extends Activity
 		
 		editText.addTextChangedListener(this);
 		
-		twitter = new Twitter("student", "password");
-		twitter.setAPIRootUrl("http://yamba.marakana.com/api");
 		
 	}
 
@@ -54,12 +54,36 @@ public class StatusActivity extends Activity
 		getMenuInflater().inflate(R.menu.status, menu);
 		return true;
 	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.itemPrefs:
+			startActivity(new Intent(this, PrefsActivity.class));
+			break;
+		case R.id.itemServiceStart:
+			startService(new Intent(this, UpdaterService.class));
+			break;
+		case R.id.itemServiceStop:
+			stopService(new Intent(this, UpdaterService.class));
+			break;
+		}
+		
+		return true;
+	}
+	
 
 	@Override
 	public void onClick(View v) {
 		String status = editText.getText().toString();
 		new PostToTwitter().execute(status);
 		Log.d(TAG, "onClicked");
+//		try {
+//			
+//			//getTwitter().setStatus(editText.getText().toString());
+//		} catch (TwitterException e) {
+//			//Log.d(TAG, "Twitter setStatus failed: " + e);
+//		}
 		
 	}
 	
@@ -68,12 +92,14 @@ public class StatusActivity extends Activity
 		@Override
 		protected String doInBackground(String... statuses) {
 			try {
-				Twitter.Status status = twitter.updateStatus(statuses[0]);
+				ChirpApplication chirp = ((ChirpApplication) getApplication());
+				Twitter.Status status = chirp
+						.getTwitter().updateStatus(statuses[0]);
 				return status.text;
 			} catch (TwitterException e) {
-				Log.e(TAG, e.toString());
-				e.printStackTrace();
-				return "Failed to post";
+				Log.e(TAG, "Failed to connect to twitter service", e);
+				//e.printStackTrace();
+				return "Failed to post - check preferences";
 			}
 		}
 		
@@ -115,5 +141,8 @@ public class StatusActivity extends Activity
 		// TODO Auto-generated method stub
 		
 	}
+
+	
+
 
 }
