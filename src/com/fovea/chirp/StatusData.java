@@ -41,8 +41,8 @@ public class StatusData {
 			
 			db.execSQL(
 				"create table " + TABLE + " (" + C_ID + " int primary key, "
-				+ C_CREATED_AT + " int, " + C_USER + " text, " + C_TEXT + " text "
-			);
+				+ C_CREATED_AT + " int, "+ C_SOURCE + " text, " + C_USER + " text, " 
+						+ C_TEXT + " text)"	);
 			
 
 		}
@@ -81,7 +81,8 @@ public class StatusData {
 	
 	public Cursor getStatusUpdates() { //
 		SQLiteDatabase db = this.dbHelper.getReadableDatabase();
-		return db.query(TABLE, null, null, null, null, null, GET_ALL_ORDER_BY); 
+		return db.query(TABLE, null, null, null, null, null, GET_ALL_ORDER_BY);
+		
 	}
 	
 	// return Timestamp of the latest status we have it in the db
@@ -115,6 +116,17 @@ public class StatusData {
 			db.close(); 
 		}
 	}
+	
+	public void delete() {
+	    // Open Database
+	    SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+	    // Delete the data
+	    db.delete(TABLE, null, null);
+
+	    // Close Database
+	    db.close();
+	  }
 	
 	
 	
