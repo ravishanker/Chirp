@@ -2,32 +2,44 @@ package com.fovea.chirp;
 
 import android.app.Service;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.IBinder;
 import android.util.Log;
 
 public class UpdaterService extends Service {
+	public static final String NEW_STATUS_INTENT = "com.fovea.chirp.NEW_STATUS";
+	public static final String NEW_STATUS_EXTRA_COUNT = "NEW_STATUS_EXTRA_COUNT";
 	static final String TAG = "UpdaterService";
 	
 	static final int DELAY = 60000; // a minute
 	private boolean runFlag = false;
 	private Updater updater;
-	private ChirpApplication chirp;
 	
-	DbHelper dbHelper;
-	SQLiteDatabase db;
+	@Override
+	public IBinder onBind(Intent intent) {
+		return null;
+	}
 	
 	@Override
 	public void onCreate() {
 		super.onCreate();
 		
-		this.chirp = (ChirpApplication) getApplication();
 		this.updater = new Updater();
-		
-		dbHelper = new DbHelper(this);
 		
 		Log.d(TAG, "onCreated");
 	}
+
+	
+	@Override
+	  public int onStartCommand(Intent intent, int flag, int startId) {
+	    if (!runFlag) {
+	      this.runFlag = true;
+	      this.updater.start();
+	      ((ChirpApplication) super.getApplication()).setServiceRunning(true);
+
+	      Log.d(TAG, "onStarted");
+	    }
+	    return Service.START_STICKY;
+	  }
 
 	@Override
 	public void onDestroy() {
@@ -36,27 +48,12 @@ public class UpdaterService extends Service {
 		this.runFlag = false;
 		this.updater.interrupt();
 		this.updater = null;
-		this.chirp.setServiceRunning(false);
+		//this.chirp.setServiceRunning(false);
+		((ChirpApplication) super.getApplication()).setServiceRunning(false);
 		
 		Log.d(TAG, "onDestroyed");
 	}
 
-	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
-		super.onStartCommand(intent, flags, startId);
-		
-		this.runFlag = true;
-		this.updater.start();
-		this.chirp.setServiceRunning(true);
-		
-		Log.d(TAG, "onStarted");
-		return START_STICKY;
-	}
-
-	@Override
-	public IBinder onBind(Intent intent) {
-		return null;
-	}
 	
 	private class Updater extends Thread {
 		
@@ -80,8 +77,7 @@ public class UpdaterService extends Service {
 					Thread.sleep(DELAY);
 				} catch (InterruptedException e) {
 					updaterService.runFlag = false;
-				}
-				
+				}				
 			}
 		}
 	} // Updater
