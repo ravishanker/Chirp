@@ -4,14 +4,10 @@ import winterwell.jtwitter.Twitter;
 import winterwell.jtwitter.TwitterException;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.app.Activity;
-import android.content.Intent;
 import android.graphics.Color;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -19,7 +15,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class StatusActivity extends Activity 
+public class StatusActivity extends BaseActivity 
 							implements OnClickListener,
 							TextWatcher {
 
@@ -47,30 +43,6 @@ public class StatusActivity extends Activity
 		
 		
 	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.status, menu);
-		return true;
-	}
-	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.itemPrefs:
-			startActivity(new Intent(this, PrefsActivity.class));
-			break;
-		case R.id.itemServiceStart:
-			startService(new Intent(this, UpdaterService.class));
-			break;
-		case R.id.itemServiceStop:
-			stopService(new Intent(this, UpdaterService.class));
-			break;
-		}
-		
-		return true;
-	}
 	
 
 	@Override
@@ -78,12 +50,6 @@ public class StatusActivity extends Activity
 		String status = editText.getText().toString();
 		new PostToTwitter().execute(status);
 		Log.d(TAG, "onClicked");
-//		try {
-//			
-//			//getTwitter().setStatus(editText.getText().toString());
-//		} catch (TwitterException e) {
-//			//Log.d(TAG, "Twitter setStatus failed: " + e);
-//		}
 		
 	}
 	

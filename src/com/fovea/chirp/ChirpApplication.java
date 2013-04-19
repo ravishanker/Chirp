@@ -40,8 +40,8 @@ public class ChirpApplication extends Application implements
 	
 	public synchronized Twitter getTwitter() {
 		if (this.twitter == null) {
-			String username = this.prefs.getString("username", "");
-			String password = this.prefs.getString("password", "");
+			String username = this.prefs.getString("username", "student");
+			String password = this.prefs.getString("password", "password");
 			String apiRoot = prefs.getString("apiRoot", 
 					"http://yamba.marakana.com/api");
 			if (!TextUtils.isEmpty(username) && !TextUtils.isEmpty(password)
@@ -70,7 +70,15 @@ public class ChirpApplication extends Application implements
 	}
 	
 	public StatusData getStatusData() {
+		//return statusData;
+		if (statusData == null) {
+			statusData = new StatusData(this);
+		}
 		return statusData;
+	}
+	
+	public SharedPreferences getPrefs() {
+	    return prefs;
 	}
 	
 	public synchronized int fetchStatusUpdates() {

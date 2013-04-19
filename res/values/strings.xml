@@ -14,8 +14,18 @@
     <string name="summaryPassword">Please enter your password</string>
     <string name="titleApiRoot">API Root</string>
     <string name="summaryApiRoot">URL of Root API for your service</string>
+    
     <string name="titlePrefs">Preferences</string>
     <string name="titleServiceStart">Start Service</string>
     <string name="titleServiceStop">Stop Service</string>
+    <string name="titleTimeline">Status Timeline</string>
+    <string name="textTimeline">Status Text</string>
+    <string name="titlePurge">Purge Data</string>
+    <string name="msgAllDataPurged">All data has been purged!</string>
+    <string name="msgSetupPrefs">Please enter your username, password and server to use.</string>
+    
+    <string name="textUser">User</string>
+    <string name="textCreatedAt">at</string>
+    <string name="textText">text</string>
 
 </resources>
