@@ -55,7 +55,12 @@
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
-        </receiver>        
+        </receiver>
+        
+        <provider 
+            android:name=".StatusProvider"
+            android:authorities="com.fovea.chirp.statusprovider">            
+        </provider>
         
         
     </application>
