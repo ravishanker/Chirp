@@ -78,6 +78,7 @@ public class TimelineActivity extends BaseActivity {
 	
 	static final ViewBinder VIEW_BINDER = new ViewBinder() {
 		
+		@Override
 		public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
 			if (view.getId() != R.id.textCreatedAt) 
 				return false;

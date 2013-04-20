@@ -35,5 +35,8 @@
   	    Receive Timeline Notifications</string>
   	<string name="receive_timeline_notifications_permission_description">
   	    Allow this application to receive timeline notifications from other applications</string>
+  	    
+  	<string name="msgLastTimelineUpdate">Chirp Widget</string>
+  	
 
 </resources>

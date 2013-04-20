@@ -50,12 +50,32 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+        
         <receiver
             android:name=".NetworkReceiver">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
-        </receiver>        
+        </receiver>
+        
+        <receiver 
+            android:name=".ChirpWidget"
+            android:label="@string/msgLastTimelineUpdate">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.fovea.chirp.NEW_STATUS" />
+            </intent-filter>
+            <meta-data 
+                android:name="android.appwidget.provider"
+                android:resource="@xml/chirp_widget_info"/>
+        </receiver>
+        
+        <provider 
+            android:name=".StatusProvider"
+            android:authorities="com.fovea.chirp.statusprovider">            
+        </provider>
         
         
     </application>
