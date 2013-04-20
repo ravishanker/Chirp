@@ -56,6 +56,10 @@ public class UpdaterService extends Service {
 
 	
 	private class Updater extends Thread {
+		Intent intent;
+		
+		static final String RECEIVE_TIMELINE_NOTIFICATIONS = 
+				"com.fovea.chirp.RECEIVE_TIMELINE_NOTIFICATIONS";
 		
 		public Updater() {
 			super("UpdaterService-Updater");
@@ -63,18 +67,27 @@ public class UpdaterService extends Service {
 		
 		@Override
 		public void run() {
+			
 			UpdaterService updaterService = UpdaterService.this;
+			
 			while (updaterService.runFlag) {
 				Log.d(TAG, "Running background thread");
+				
 				try {
 					// Get the time-line from the cloud
 					ChirpApplication chirp = (ChirpApplication) updaterService
 							.getApplication();
 					int newUpdates = chirp.fetchStatusUpdates();
+					
 					if (newUpdates > 0) {
 						Log.d(TAG, "We have new status");
+						intent = new Intent(NEW_STATUS_INTENT);
+						intent.putExtra(NEW_STATUS_EXTRA_COUNT, newUpdates);
+						updaterService.sendBroadcast(
+								intent, RECEIVE_TIMELINE_NOTIFICATIONS);
 					}
-					Thread.sleep(DELAY);
+					
+					Thread.sleep(60000);
 				} catch (InterruptedException e) {
 					updaterService.runFlag = false;
 				}				
