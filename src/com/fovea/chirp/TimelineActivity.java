@@ -1,9 +1,13 @@
 package com.fovea.chirp;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -22,6 +26,12 @@ public class TimelineActivity extends BaseActivity {
 		R.id.textCreatedAt, R.id.textUser, R.id.textText
 	};
 	
+	TimelineReceiver receiver;
+	IntentFilter filter;
+	
+	static final String SENE_TIMELINE_NOTIFICATIONS = 
+			"com.fovea.chirp.SEND_TIMELINE_NOTIFICATIONS";
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -32,7 +42,9 @@ public class TimelineActivity extends BaseActivity {
 			Toast.makeText(this, R.string.msgSetupPrefs, Toast.LENGTH_LONG).show(); 
 		}
 		
-		listTimeline = (ListView) findViewById(R.id.listTimeline);	
+		listTimeline = (ListView) findViewById(R.id.listTimeline);
+		
+		filter = new IntentFilter("com.fovea.chirp.NEW_STATUS");
 		
 	}
 	
@@ -48,6 +60,8 @@ public class TimelineActivity extends BaseActivity {
 		super.onResume();
 		
 		this.setupList();
+		
+		registerReceiver(receiver, filter, SENE_TIMELINE_NOTIFICATIONS, null);
 		
 	}
 	
@@ -78,5 +92,17 @@ public class TimelineActivity extends BaseActivity {
 			return true;			
 		}
 	};
+	
+	class TimelineReceiver extends BroadcastReceiver {
+
+		@SuppressWarnings("deprecation")
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			cursor.requery();
+			adapter.notifyDataSetChanged();
+			Log.d("TimelineReceiver", "onReceived");
+		}
+		
+	}
 	
 }
